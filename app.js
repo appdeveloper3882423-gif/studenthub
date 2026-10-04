@@ -1,53 +1,2617 @@
-const CV="https://cv-builder-xi-one.vercel.app/";const $=s=>document.querySelector(s);const $$=s=>document.querySelectorAll(s);
-document.addEventListener("DOMContentLoaded",()=>{
-$("#year").textContent=new Date().getFullYear();
-if(localStorage.getItem("sh-theme")==="dark")document.body.classList.add("dark");$("#theme").textContent=document.body.classList.contains("dark")?"☀":"☾";
-$("#theme").onclick=()=>{document.body.classList.toggle("dark");localStorage.setItem("sh-theme",document.body.classList.contains("dark")?"dark":"light");$("#theme").textContent=document.body.classList.contains("dark")?"☀":"☾"};
-$("#menu").onclick=()=>{$("#nav").style.display=$("#nav").style.display==="flex"?"":"flex";$("#nav").style.position="absolute";$("#nav").style.top="65px";$("#nav").style.left="12px";$("#nav").style.right="12px";$("#nav").style.padding="15px";$("#nav").style.background="var(--card)";$("#nav").style.border="1px solid var(--line)";$("#nav").style.borderRadius="16px";$("#nav").style.flexDirection="column";$("#nav").style.alignItems="stretch"};
-$$("[data-cat]").forEach(b=>b.onclick=()=>{$$("[data-cat]").forEach(x=>x.classList.remove("active"));b.classList.add("active");filter()});
-$("#search").oninput=filter;$$(".tool").forEach(x=>x.onclick=e=>{if(e.target.tagName==="BUTTON"||e.currentTarget===e.target)openTool(x.dataset.tool)});
-$$("[data-cv]").forEach(x=>x.onclick=openCV);$("#modal").onclick=e=>{if(e.target.matches("[data-close]")||e.target.classList.contains("back"))closeTool()};$("#cvclose").onclick=closeCV;
-document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeTool();closeCV()}});
-});
-function filter(){let cat=document.querySelector(".cats .active")?.dataset.cat||"all",q=$("#search").value.toLowerCase(),n=0;$$(".tool").forEach(x=>{let ok=(cat==="all"||x.dataset.cat.includes(cat))&&(!q||x.dataset.name.toLowerCase().includes(q)||x.textContent.toLowerCase().includes(q));x.classList.toggle("hidden",!ok);if(ok)n++});$("#none").classList.toggle("hidden",n>0)}
-const T={
-percentage:`<div class=form><div class=row><div class=field><label>Obtained marks</label><input id=a type=number placeholder=450></div><div class=field><label>Total marks</label><input id=b type=number placeholder=500></div></div><button class="btn primary" id=go>Calculate</button><div id=r></div></div>`,
-gpa:`<div class=form><p class=muted>Enter credits and grade points (0–4).</p><div id=rows><div class=row><input class=c type=number placeholder=Credits><input class=g type=number step=.01 placeholder="Grade points"></div><div class=row><input class=c type=number placeholder=Credits><input class=g type=number step=.01 placeholder="Grade points"></div><div class=row><input class=c type=number placeholder=Credits><input class=g type=number step=.01 placeholder="Grade points"></div></div><button class="btn ghost" id=add>+ Add Course</button><button class="btn primary" id=go>Calculate GPA</button><div id=r></div></div>`,
-cgpa:`<div class=form><p class=muted>Enter each semester GPA and credits.</p><div id=rows><div class=row><input class=g type=number step=.01 placeholder=GPA><input class=c type=number placeholder=Credits></div><div class=row><input class=g type=number step=.01 placeholder=GPA><input class=c type=number placeholder=Credits></div></div><button class="btn ghost" id=add>+ Add Semester</button><button class="btn primary" id=go>Calculate CGPA</button><div id=r></div></div>`,
-grade:`<div class=form><div class=row><div class=field><label>Marks</label><input id=m type=number></div><div class=field><label>Total</label><input id=t type=number></div></div><button class="btn primary" id=go>Find Grade</button><div id=r></div><p class=muted>Scale: A+ ≥90, A ≥80, B ≥70, C ≥60, D ≥50, F &lt;50.</p></div>`,
-attendance:`<div class=form><div class=row><div class=field><label>Classes attended</label><input id=a type=number></div><div class=field><label>Total classes</label><input id=t type=number></div></div><div class=field><label>Required attendance %</label><input id=req type=number value=75></div><button class="btn primary" id=go>Calculate</button><div id=r></div></div>`,
-average:`<div class=form><div class=field><label>Numbers separated by commas</label><input id=n placeholder="10, 20, 30, 40"></div><button class="btn primary" id=go>Calculate Average</button><div id=r></div></div>`,
-age:`<div class=form><div class=field><label>Date of birth</label><input id=d type=date></div><button class="btn primary" id=go>Calculate Age</button><div id=r></div></div>`,
-units:`<div class=form><div class=row><input id=v type=number placeholder=10><select id=type><option value=length>Length</option><option value=weight>Weight</option><option value=temp>Temperature</option><option value=data>Data</option></select></div><div class=row><select id=from></select><select id=to></select></div><button class="btn primary" id=go>Convert</button><div id=r></div></div>`,
-words:`<div class=form><textarea id=text rows=9 placeholder="Paste your assignment here..."></textarea><div class=wordstats><div><b id=w>0</b><small>Words</small></div><div><b id=ch>0</b><small>Characters</small></div><div><b id=se>0</b><small>Sentences</small></div><div><b id=rt>0</b><small>Minutes</small></div></div></div>`,
-case:`<div class=form><textarea id=text rows=9 placeholder="Type or paste text..."></textarea><div class=row><button class="btn ghost" data-case=upper>UPPERCASE</button><button class="btn ghost" data-case=lower>lowercase</button></div><div class=row><button class="btn ghost" data-case=title>Title Case</button><button class="btn ghost" data-case=sentence>Sentence case</button></div></div>`,
-timer:`<div class=form><div class=timer id=tm>25:00</div><div class=timerbuttons><button class="btn primary" id=start>Start</button><button class="btn ghost" id=reset>Reset</button></div><p class=muted style="text-align:center">25-minute focus session.</p></div>`,
-countdown:`<div class=form><div class=field><label>Exam date & time</label><input id=date type=datetime-local></div><button class="btn primary" id=go>Start Countdown</button><div id=r></div></div>`,
-qr:`<div class=form><div class=field><label>Text or URL</label><input id=q placeholder="https://example.com"></div><button class="btn primary" id=go>Generate QR</button><div id=r></div><p class=muted>Uses a public QR image service; do not put private information into the QR text.</p></div>`,
-password:`<div class=form><div class=field><label>Length</label><input id=len type=number value=16 min=8 max=64></div><button class="btn primary" id=go>Generate Password</button><div id=r></div></div>`,
-planner:`<div class=form><div class=row><input id=task placeholder="Study task"><button class="btn primary" id=add>Add</button></div><div class=planner-list id=list></div><button class="btn ghost" id=clear>Clear All</button></div>`,
-cv:`<div class=form><p class=muted>Open the official CV Builder connected to StudentHub.</p><button class="btn primary" id=go>Open Official CV Builder →</button></div>`
+"use strict";
+
+/* =========================================================
+   STUDENTHUB APP
+========================================================= */
+
+const STORAGE_KEY = "studenthub_v1";
+
+const defaultData = {
+  tasks: [],
+  notes: [],
+  habits: {},
+  focusMinutes: 0,
+  theme: "light"
 };
-const names={percentage:"Percentage Calculator",gpa:"GPA Calculator",cgpa:"CGPA Calculator",grade:"Grade Calculator",attendance:"Attendance Calculator",average:"Average Calculator",age:"Age Calculator",units:"Unit Converter",words:"Word Counter",case:"Case Converter",timer:"Study Timer",countdown:"Exam Countdown",qr:"QR Code Generator",password:"Password Generator",planner:"Study Planner",cv:"CV Builder"};
-function openTool(type){$("#modal").classList.add("open");$("#title").textContent=names[type];$("#kicker").textContent=type==="cv"?"OFFICIAL":"STUDENT TOOL";$("#body").innerHTML=T[type];init(type)}
-function closeTool(){$("#modal").classList.remove("open")}
-function init(x){
-if(x==="percentage")$("#go").onclick=()=>{let a=+$("#a").value,b=+$("#b").value;$("#r").innerHTML=b?`<div class=result><strong>${(a/b*100).toFixed(2)}%</strong><br>Percentage</div>`:"Enter valid marks."};
-if(x==="gpa"){ $("#add").onclick=()=>$("#rows").insertAdjacentHTML("beforeend",`<div class=row><input class=c type=number placeholder=Credits><input class=g type=number step=.01 placeholder="Grade points"></div>`);$("#go").onclick=()=>{let p=0,c=0;$$(".c").forEach((e,i)=>{let cr=+e.value,g=+$(".g")[i].value;if(cr>0){p+=cr*g;c+=cr}});$("#r").innerHTML=c?`<div class=result><strong>${(p/c).toFixed(2)}</strong><br>Weighted GPA</div>`:"Enter valid data."}};
-if(x==="cgpa"){ $("#add").onclick=()=>$("#rows").insertAdjacentHTML("beforeend",`<div class=row><input class=g type=number step=.01 placeholder=GPA><input class=c type=number placeholder=Credits></div>`);$("#go").onclick=()=>{let p=0,c=0;$$(".g").forEach((e,i)=>{let g=+e.value,cr=+$(".c")[i].value;if(cr>0){p+=g*cr;c+=cr}});$("#r").innerHTML=c?`<div class=result><strong>${(p/c).toFixed(2)}</strong><br>Weighted CGPA</div>`:"Enter valid data."}};
-if(x==="grade")$("#go").onclick=()=>{let m=+$("#m").value,t=+$("#t").value,p=t?m/t*100:0,g=p>=90?"A+":p>=80?"A":p>=70?"B":p>=60?"C":p>=50?"D":"F";$("#r").innerHTML=t?`<div class=result><strong>${g}</strong><br>${p.toFixed(2)}%</div>`:"Enter valid marks."};
-if(x==="attendance")$("#go").onclick=()=>{let a=+$("#a").value,t=+$("#t").value,req=+$("#req").value||75,p=t?a/t*100:0;let extra=Math.max(0,Math.ceil((req*t/100-a)/(1-req/100)));$("#r").innerHTML=t?`<div class=result><strong>${p.toFixed(2)}%</strong><br>${p>=req?`You can currently miss up to ${Math.floor((a/100*100-req*t/100)/(req/100))} class(es) approximately.`:`You need to attend the next ${extra} class(es) consecutively to reach ${req}%.`}</div>`:"Enter valid data."};
-if(x==="average")$("#go").onclick=()=>{let n=$("#n").value.split(",").map(Number).filter(Number.isFinite);$("#r").innerHTML=n.length?`<div class=result><strong>${(n.reduce((a,b)=>a+b,0)/n.length).toFixed(2)}</strong><br>Total: ${n.reduce((a,b)=>a+b,0)} · Highest: ${Math.max(...n)} · Lowest: ${Math.min(...n)}</div>`:"Enter comma-separated numbers."};
-if(x==="age")$("#go").onclick=()=>{let d=new Date($("#d").value),now=new Date();if(isNaN(d))return;let y=now.getFullYear()-d.getFullYear(),m=now.getMonth()-d.getMonth(),day=now.getDate()-d.getDate();if(day<0){m--;day+=new Date(now.getFullYear(),now.getMonth(),0).getDate()}if(m<0){y--;m+=12}$("#r").innerHTML=`<div class=result><strong>${y} years, ${m} months, ${day} days</strong></div>`};
-if(x==="units"){let U={length:{m:["Meter",1],km:["Kilometer",1000],cm:["Centimeter",.01],ft:["Foot",.3048],in:["Inch",.0254]},weight:{kg:["Kilogram",1],g:["Gram",.001],lb:["Pound",.45359237],oz:["Ounce",.0283495]},data:{B:["Bytes",1],KB:["KB",1024],MB:["MB",1048576],GB:["GB",1073741824]},temp:{C:["Celsius",0],F:["Fahrenheit",0],K:["Kelvin",0]}};function set(){let u=U[$("#type").value];$("#from").innerHTML=Object.entries(u).map(([k,v])=>`<option value=${k}>${v[0]}</option>`).join("");$("#to").innerHTML=Object.entries(u).map(([k,v])=>`<option value=${k}>${v[0]}</option>`).join("")}$("#type").onchange=set;set();$("#go").onclick=()=>{let typ=$("#type").value,v=+$("#v").value,f=$("#from").value,t=$("#to").value,o=v;if(typ==="temp"){let c=f==="C"?v:f==="F"?(v-32)*5/9:v-273.15;o=t==="C"?c:t==="F"?c*9/5+32:c+273.15}else o=v*U[typ][f][1]/U[typ][t][1];$("#r").innerHTML=`<div class=result><strong>${Number(o.toFixed(6))}</strong> ${U[typ][t][0]}</div>`}};
-if(x==="words")$("#text").oninput=()=>{let t=$("#text").value,w=t.trim()?t.trim().split(/\s+/).length:0;$("#w").textContent=w;$("#ch").textContent=t.length;$("#se").textContent=t.split(/[.!?]+/).filter(a=>a.trim()).length;$("#rt").textContent=Math.ceil(w/200)};
-if(x==="case")$$("[data-case]").forEach(b=>b.onclick=()=>{let t=$("#text").value,c=b.dataset.case;if(c==="upper")t=t.toUpperCase();if(c==="lower")t=t.toLowerCase();if(c==="title")t=t.toLowerCase().replace(/\b\w/g,a=>a.toUpperCase());if(c==="sentence")t=t.toLowerCase().replace(/(^\s*\w|[.!?]\s+\w)/g,a=>a.toUpperCase());$("#text").value=t});
-if(x==="timer"){let s=1500,i;function render(){$("#tm").textContent=`${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`}$("#start").onclick=()=>{if(i){clearInterval(i);i=null;$("#start").textContent="Start"}else{i=setInterval(()=>{if(s<=0){clearInterval(i);i=null;$("#start").textContent="Start";return}s--;render()},1000);$("#start").textContent="Pause"}};$("#reset").onclick=()=>{clearInterval(i);i=null;s=1500;render();$("#start").textContent="Start"}}
-if(x==="countdown")$("#go").onclick=()=>{let d=new Date($("#date").value);if(isNaN(d))return;let box=$("#r");clearInterval(window.cd);let run=()=>{let ms=d-new Date();if(ms<=0){box.innerHTML=`<div class=result><strong>Exam time!</strong></div>`;clearInterval(window.cd);return}let days=Math.floor(ms/864e5),h=Math.floor(ms%864e5/36e5),m=Math.floor(ms%36e5/6e4),s=Math.floor(ms%6e4/1e3);box.innerHTML=`<div class=result><strong>${days}d ${h}h ${m}m ${s}s</strong><br>remaining</div>`};run();window.cd=setInterval(run,1000)};
-if(x==="qr")$("#go").onclick=()=>{let v=$("#q").value;if(!v)return;$("#r").innerHTML=`<div class=result style="text-align:center"><img alt="QR code" style="max-width:220px;border-radius:12px" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(v)}"><p>QR generated for the entered text.</p></div>`};
-if(x==="password")$("#go").onclick=()=>{let n=Math.min(64,Math.max(8,+$("#len").value||16)),chars="ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*";let a=new Uint32Array(n);crypto.getRandomValues(a);let p=[...a].map(v=>chars[v%chars.length]).join("");$("#r").innerHTML=`<div class=result><input value="${p}" readonly style="width:100%;padding:10px;background:var(--soft);color:var(--text);border:1px solid var(--line);border-radius:9px"><p class=muted>Generated locally in your browser.</p></div>`};
-if(x==="planner"){let key="sh-planner";function load(){let a=JSON.parse(localStorage.getItem(key)||"[]");$("#list").innerHTML=a.map((t,i)=>`<div class=task><input type=checkbox ${t.done?"checked":""} data-i=${i}><span style="${t.done?"text-decoration:line-through;opacity:.55":""}">${esc(t.text)}</span><button data-del=${i}>×</button></div>`).join("");$$("[data-i]").forEach(c=>c.onchange=()=>{a[c.dataset.i].done=c.checked;localStorage.setItem(key,JSON.stringify(a));load()});$$("[data-del]").forEach(b=>b.onclick=()=>{a.splice(b.dataset.del,1);localStorage.setItem(key,JSON.stringify(a));load()})}$("#add").onclick=()=>{let t=$("#task").value.trim();if(!t)return;let a=JSON.parse(localStorage.getItem(key)||"[]");a.push({text:t,done:false});localStorage.setItem(key,JSON.stringify(a));$("#task").value="";load()};$("#clear").onclick=()=>{localStorage.removeItem(key);load()};load()}
-if(x==="cv")$("#go").onclick=openCV}
-function esc(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
-function openCV(){$("#cvmodal").classList.add("open");$("#loading").classList.add("show");$("#fallback").classList.remove("show");$("#cvframe").src=CV;let ok=false;$("#cvframe").onload=()=>{ok=true;setTimeout(()=>$("#loading").classList.remove("show"),500)};setTimeout(()=>{if(!ok){$("#loading").classList.remove("show");$("#fallback").classList.add("show")}},5000)}
-function closeCV(){$("#cvmodal").classList.remove("open");setTimeout(()=>$("#cvframe").src="about:blank",200)}
+
+let data = loadData();
+
+let currentFilter = "All";
+let focusSeconds = 25 * 60;
+let focusRunning = false;
+let focusInterval = null;
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function $(id){
+  return document.getElementById(id);
+}
+
+function saveData(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function loadData(){
+
+  try{
+
+    const saved =
+      JSON.parse(localStorage.getItem(STORAGE_KEY));
+
+    return {
+      ...defaultData,
+      ...(saved || {})
+    };
+
+  }catch{
+
+    return {
+      ...defaultData
+    };
+
+  }
+
+}
+
+function escapeHTML(value){
+
+  return String(value)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+}
+
+
+/* =========================================================
+   THEME
+========================================================= */
+
+function applyTheme(){
+
+  if(data.theme === "dark"){
+
+    document.body.classList.add("dark");
+
+    if($("theme")){
+      $("theme").textContent = "☀";
+    }
+
+  }else{
+
+    document.body.classList.remove("dark");
+
+    if($("theme")){
+      $("theme").textContent = "☾";
+    }
+
+  }
+
+}
+
+$("theme")?.addEventListener("click",()=>{
+
+  data.theme =
+    document.body.classList.contains("dark")
+      ? "light"
+      : "dark";
+
+  saveData();
+  applyTheme();
+
+});
+
+applyTheme();
+
+
+/* =========================================================
+   TOOL DATABASE
+========================================================= */
+
+const tools = [
+
+{
+  id:"gpa",
+  title:"GPA Calculator",
+  category:"Academic",
+  icon:"🎓",
+  description:"Calculate GPA from course grades and credit hours."
+},
+
+{
+  id:"cgpa",
+  title:"CGPA Calculator",
+  category:"Academic",
+  icon:"📊",
+  description:"Calculate cumulative GPA across semesters."
+},
+
+{
+  id:"grade",
+  title:"Grade Calculator",
+  category:"Academic",
+  icon:"🏆",
+  description:"Find your percentage and estimated grade."
+},
+
+{
+  id:"attendance",
+  title:"Attendance Calculator",
+  category:"Academic",
+  icon:"📅",
+  description:"Calculate attendance percentage."
+},
+
+{
+  id:"percentage",
+  title:"Percentage Calculator",
+  category:"Academic",
+  icon:"％",
+  description:"Calculate percentage quickly."
+},
+
+{
+  id:"average",
+  title:"Average Calculator",
+  category:"Academic",
+  icon:"➗",
+  description:"Find the average of multiple numbers."
+},
+
+{
+  id:"age",
+  title:"Age Calculator",
+  category:"Utilities",
+  icon:"🎂",
+  description:"Calculate age from date of birth."
+},
+
+{
+  id:"unit",
+  title:"Unit Converter",
+  category:"Utilities",
+  icon:"📐",
+  description:"Convert common units."
+},
+
+{
+  id:"qr",
+  title:"QR Generator",
+  category:"Utilities",
+  icon:"▦",
+  description:"Generate a QR code from any text or link."
+},
+
+{
+  id:"password",
+  title:"Password Generator",
+  category:"Utilities",
+  icon:"🔐",
+  description:"Generate a strong random password."
+},
+
+{
+  id:"word",
+  title:"Word Counter",
+  category:"Writing",
+  icon:"✍️",
+  description:"Count words, characters and sentences."
+},
+
+{
+  id:"case",
+  title:"Case Converter",
+  category:"Writing",
+  icon:"Aa",
+  description:"Convert text to upper, lower or title case."
+},
+
+{
+  id:"citation",
+  title:"Citation Helper",
+  category:"Writing",
+  icon:"📚",
+  description:"Create simple APA-style references."
+},
+
+{
+  id:"pomodoro",
+  title:"Pomodoro Timer",
+  category:"Study",
+  icon:"🍅",
+  description:"Study in focused intervals."
+},
+
+{
+  id:"exam",
+  title:"Exam Countdown",
+  category:"Study",
+  icon:"⏳",
+  description:"See how many days remain until an exam."
+},
+
+{
+  id:"budget",
+  title:"Student Budget",
+  category:"Career",
+  icon:"💰",
+  description:"Estimate income, expenses and savings."
+},
+
+{
+  id:"interview",
+  title:"Interview Practice",
+  category:"Career",
+  icon:"🎤",
+  description:"Practice common interview questions."
+},
+
+{
+  id:"timezone",
+  title:"Time Zone",
+  category:"International",
+  icon:"🌍",
+  description:"Compare international study destinations."
+},
+
+{
+  id:"currency",
+  title:"Currency Converter",
+  category:"International",
+  icon:"💱",
+  description:"Convert currencies using public exchange rates."
+},
+
+{
+  id:"date",
+  title:"Date Difference",
+  category:"International",
+  icon:"📅",
+  description:"Calculate the days between two dates."
+}
+
+];
+
+
+/* =========================================================
+   TOOL FILTERS
+========================================================= */
+
+const categories = [
+  "All",
+  ...new Set(tools.map(tool => tool.category))
+];
+
+function renderFilters(){
+
+  const container = $("filters");
+
+  if(!container) return;
+
+  container.innerHTML = categories.map(category => `
+    <button
+      class="filter ${category === currentFilter ? "active" : ""}"
+      onclick="setFilter('${category}')">
+      ${category}
+    </button>
+  `).join("");
+
+}
+
+window.setFilter = function(category){
+
+  currentFilter = category;
+
+  renderFilters();
+  renderTools();
+
+};
+
+function renderTools(){
+
+  const grid = $("toolGrid");
+
+  if(!grid) return;
+
+  const query =
+    ($("search")?.value || "")
+      .trim()
+      .toLowerCase();
+
+  const filtered = tools.filter(tool => {
+
+    const matchesCategory =
+      currentFilter === "All" ||
+      tool.category === currentFilter;
+
+    const text =
+      `${tool.title} ${tool.category} ${tool.description}`
+        .toLowerCase();
+
+    const matchesSearch =
+      !query || text.includes(query);
+
+    return matchesCategory && matchesSearch;
+
+  });
+
+  if(!filtered.length){
+
+    grid.innerHTML = `
+      <div class="card" style="padding:25px;grid-column:1/-1">
+        <h3>No tools found</h3>
+        <p style="margin-top:6px;color:var(--muted)">
+          Try another search or category.
+        </p>
+      </div>
+    `;
+
+    return;
+  }
+
+  grid.innerHTML = filtered.map(tool => `
+
+    <div class="tool-card">
+
+      <div class="tool-icon">
+        ${tool.icon}
+      </div>
+
+      <h3>
+        ${escapeHTML(tool.title)}
+      </h3>
+
+      <p>
+        ${escapeHTML(tool.description)}
+      </p>
+
+      <button
+        class="tool-btn"
+        onclick="openTool('${tool.id}')">
+        Open Tool
+      </button>
+
+    </div>
+
+  `).join("");
+
+}
+
+$("search")?.addEventListener(
+  "input",
+  renderTools
+);
+
+renderFilters();
+renderTools();
+
+
+/* =========================================================
+   TASKS
+========================================================= */
+
+function renderTasks(){
+
+  const box = $("tasks");
+
+  if(!box) return;
+
+  if(!data.tasks.length){
+
+    box.innerHTML = `
+      <p style="color:var(--muted);padding:18px 0">
+        No tasks yet. Add your first study task.
+      </p>
+    `;
+
+  }else{
+
+    box.innerHTML = data.tasks.map(task => `
+
+      <div class="task ${task.done ? "done" : ""}">
+
+        <input
+          class="task-check"
+          type="checkbox"
+          ${task.done ? "checked" : ""}
+          onchange="toggleTask('${task.id}')">
+
+        <span>
+          ${escapeHTML(task.text)}
+        </span>
+
+        <button
+          class="task-delete"
+          onclick="deleteTask('${task.id}')">
+          ✕
+        </button>
+
+      </div>
+
+    `).join("");
+
+  }
+
+  updateStats();
+
+}
+
+function addTask(){
+
+  const input = $("taskInput");
+
+  if(!input) return;
+
+  const text = input.value.trim();
+
+  if(!text){
+
+    input.focus();
+    return;
+
+  }
+
+  data.tasks.unshift({
+
+    id:
+      Date.now().toString() +
+      Math.random().toString(16).slice(2),
+
+    text,
+    done:false,
+    created:Date.now()
+
+  });
+
+  input.value = "";
+
+  saveData();
+  renderTasks();
+
+}
+
+window.toggleTask = function(id){
+
+  const task =
+    data.tasks.find(item => item.id === id);
+
+  if(!task) return;
+
+  task.done = !task.done;
+
+  saveData();
+  renderTasks();
+
+};
+
+window.deleteTask = function(id){
+
+  data.tasks =
+    data.tasks.filter(item => item.id !== id);
+
+  saveData();
+  renderTasks();
+
+};
+
+$("addTask")?.addEventListener(
+  "click",
+  addTask
+);
+
+$("taskInput")?.addEventListener(
+  "keydown",
+  e => {
+
+    if(e.key === "Enter"){
+      addTask();
+    }
+
+  }
+);
+
+
+/* =========================================================
+   STATS
+========================================================= */
+
+function updateStats(){
+
+  const completed =
+    data.tasks.filter(task => task.done).length;
+
+  const habits =
+    Object.values(data.habits)
+      .filter(Boolean)
+      .length;
+
+  if($("taskStat"))
+    $("taskStat").textContent = completed;
+
+  if($("studyStat"))
+    $("studyStat").textContent =
+      `${data.focusMinutes || 0}m`;
+
+  if($("noteStat"))
+    $("noteStat").textContent =
+      data.notes.length;
+
+  if($("habitStat"))
+    $("habitStat").textContent =
+      habits;
+
+  if($("focusText"))
+    $("focusText").textContent =
+      `${data.focusMinutes || 0} minutes focused today`;
+
+  if($("focusBar")){
+
+    const percent =
+      Math.min(
+        ((data.focusMinutes || 0) / 120) * 100,
+        100
+      );
+
+    $("focusBar").style.width =
+      `${percent}%`;
+
+  }
+
+}
+
+renderTasks();
+
+
+/* =========================================================
+   FOCUS TIMER
+========================================================= */
+
+function updateFocusTimer(){
+
+  const min =
+    Math.floor(focusSeconds / 60)
+      .toString()
+      .padStart(2,"0");
+
+  const sec =
+    (focusSeconds % 60)
+      .toString()
+      .padStart(2,"0");
+
+  if($("focusTimer")){
+    $("focusTimer").textContent =
+      `${min}:${sec}`;
+  }
+
+}
+
+function startFocus(){
+
+  if(focusRunning){
+
+    stopFocus();
+
+    return;
+
+  }
+
+  focusRunning = true;
+
+  if($("focusStart")){
+    $("focusStart").textContent =
+      "Pause Focus";
+  }
+
+  focusInterval = setInterval(()=>{
+
+    focusSeconds--;
+
+    updateFocusTimer();
+
+    if(focusSeconds <= 0){
+
+      stopFocus();
+
+      data.focusMinutes += 25;
+
+      saveData();
+
+      focusSeconds = 25 * 60;
+
+      updateFocusTimer();
+      updateStats();
+
+      alert(
+        "Focus session complete! Great work."
+      );
+
+    }
+
+  },1000);
+
+}
+
+function stopFocus(){
+
+  focusRunning = false;
+
+  clearInterval(focusInterval);
+
+  focusInterval = null;
+
+  if($("focusStart")){
+    $("focusStart").textContent =
+      "Start 25-min Focus";
+  }
+
+}
+
+$("focusStart")?.addEventListener(
+  "click",
+  startFocus
+);
+
+updateFocusTimer();
+
+
+/* =========================================================
+   NOTES
+========================================================= */
+
+function renderNotes(){
+
+  const list = $("noteList");
+
+  if(!list) return;
+
+  if(!data.notes.length){
+
+    list.innerHTML = `
+      <p style="color:var(--muted);margin-top:15px">
+        No saved notes yet.
+      </p>
+    `;
+
+    updateStats();
+
+    return;
+  }
+
+  list.innerHTML =
+    data.notes.map(note => `
+
+      <div class="note-item">
+
+        ${escapeHTML(note.text)}
+
+        <small>
+          ${new Date(note.created).toLocaleString()}
+        </small>
+
+      </div>
+
+    `).join("");
+
+  updateStats();
+
+}
+
+$("saveNote")?.addEventListener(
+  "click",
+  ()=>{
+
+    const input = $("notes");
+
+    const text =
+      input.value.trim();
+
+    if(!text){
+
+      input.focus();
+      return;
+
+    }
+
+    data.notes.unshift({
+
+      text,
+      created:Date.now()
+
+    });
+
+    input.value = "";
+
+    saveData();
+    renderNotes();
+
+  }
+);
+
+renderNotes();
+
+
+/* =========================================================
+   HABITS
+========================================================= */
+
+const habitList = [
+
+  "Study for 30 minutes",
+  "Review today's notes",
+  "Complete an assignment",
+  "Read something educational",
+  "Plan tomorrow"
+
+];
+
+function habitKey(index){
+
+  const d =
+    new Date()
+      .toISOString()
+      .slice(0,10);
+
+  return `${d}_${index}`;
+
+}
+
+function renderHabits(){
+
+  const box = $("habits");
+
+  if(!box) return;
+
+  box.innerHTML =
+    habitList.map((habit,index)=>{
+
+      const key = habitKey(index);
+
+      return `
+
+        <label class="habit">
+
+          <input
+            type="checkbox"
+            ${data.habits[key] ? "checked" : ""}
+            onchange="toggleHabit('${key}')">
+
+          <span>
+            ${escapeHTML(habit)}
+          </span>
+
+        </label>
+
+      `;
+
+    }).join("");
+
+  updateStats();
+
+}
+
+window.toggleHabit = function(key){
+
+  data.habits[key] =
+    !data.habits[key];
+
+  saveData();
+  renderHabits();
+
+};
+
+renderHabits();
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+function showModal(title,html){
+
+  $("modalTitle").textContent =
+    title;
+
+  $("modalBody").innerHTML =
+    html;
+
+  $("modal").classList.add("show");
+
+  document.body.style.overflow =
+    "hidden";
+
+}
+
+window.closeTool = function(){
+
+  $("modal").classList.remove("show");
+
+  document.body.style.overflow =
+    "";
+
+};
+
+$("modal")?.addEventListener(
+  "click",
+  e => {
+
+    if(e.target === $("modal")){
+      closeTool();
+    }
+
+  }
+);
+
+
+/* =========================================================
+   TOOL OPENING
+========================================================= */
+
+window.openTool = function(id){
+
+  const tool =
+    tools.find(item => item.id === id);
+
+  if(!tool) return;
+
+  const renderers = {
+
+    gpa:gpaTool,
+
+    cgpa:cgpaTool,
+
+    grade:gradeTool,
+
+    attendance:attendanceTool,
+
+    percentage:percentageTool,
+
+    average:averageTool,
+
+    age:ageTool,
+
+    unit:unitTool,
+
+    qr:qrTool,
+
+    password:passwordTool,
+
+    word:wordTool,
+
+    case:caseTool,
+
+    citation:citationTool,
+
+    pomodoro:pomodoroTool,
+
+    exam:examTool,
+
+    budget:budgetTool,
+
+    interview:interviewTool,
+
+    timezone:timezoneTool,
+
+    currency:currencyTool,
+
+    date:dateTool
+
+  };
+
+  const renderer =
+    renderers[id];
+
+  if(renderer){
+    showModal(
+      tool.title,
+      renderer()
+    );
+  }
+
+};
+
+
+/* =========================================================
+   GPA
+========================================================= */
+
+function gpaTool(){
+
+  return `
+
+    <div class="tool-form">
+
+      <label>Grade points</label>
+
+      <input
+        id="gpaGrades"
+        placeholder="4, 3.5, 3, 4">
+
+      <label>Credit hours</label>
+
+      <input
+        id="gpaCredits"
+        placeholder="3, 3, 4, 3">
+
+      <button
+        class="btn primary"
+        onclick="calculateGPA()">
+        Calculate GPA
+      </button>
+
+      <div
+        class="result"
+        id="gpaResult">
+        Enter grade points and credits.
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+window.calculateGPA = function(){
+
+  const grades =
+    $("gpaGrades").value
+      .split(",")
+      .map(Number)
+      .filter(Number.isFinite);
+
+  const credits =
+    $("gpaCredits").value
+      .split(",")
+      .map(Number)
+      .filter(Number.isFinite);
+
+  if(
+    !grades.length ||
+    grades.length !== credits.length
+  ){
+
+    $("gpaResult").textContent =
+      "Please enter matching values.";
+
+    return;
+
+  }
+
+  let points = 0;
+  let totalCredits = 0;
+
+  grades.forEach((grade,i)=>{
+
+    points += grade * credits[i];
+    totalCredits += credits[i];
+
+  });
+
+  const gpa =
+    totalCredits
+      ? points / totalCredits
+      : 0;
+
+  $("gpaResult").innerHTML =
+    `<strong>GPA: ${gpa.toFixed(2)}</strong>`;
+
+};
+
+
+/* =========================================================
+   CGPA
+========================================================= */
+
+function cgpaTool(){
+
+  return `
+
+    <div class="tool-form">
+
+      <label>Semester GPAs</label>
+
+      <input
+        id="cgpaValues"
+        placeholder="3.2, 3.5, 3.7">
+
+      <button
+        class="btn primary"
+        onclick="calculateCGPA()">
+        Calculate CGPA
+      </button>
+
+      <div
+        class="result"
+        id="cgpaResult">
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+window.calculateCGPA = function(){
+
+  const values =
+    $("cgpaValues").value
+      .split(",")
+      .map(Number)
+      .filter(Number.isFinite);
+
+  if(!values.length){
+
+    $("cgpaResult").textContent =
+      "Enter your semester GPAs.";
+
+    return;
+
+  }
+
+  const avg =
+    values.reduce(
+      (a,b)=>a+b,
+      0
+    ) / values.length;
+
+  $("cgpaResult").innerHTML =
+    `<strong>CGPA: ${avg.toFixed(2)}</strong>`;
+
+};
+
+
+/* =========================================================
+   GRADE
+========================================================= */
+
+function gradeTool(){
+
+  return `
+
+    <div class="tool-form">
+
+      <label>Obtained marks</label>
+
+      <input
+        id="obtained"
+        type="number">
+
+      <label>Total marks</label>
+
+      <input
+        id="total"
+        type="number">
+
+      <button
+        class="btn primary"
+        onclick="calculateGrade()">
+        Calculate Grade
+      </button>
+
+      <div
+        class="result"
+        id="gradeResult">
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+window.calculateGrade = function(){
+
+  const obtained =
+    Number($("obtained").value);
+
+  const total =
+    Number($("total").value);
+
+  if(
+    !total ||
+    total <= 0 ||
+    obtained < 0
+  ){
+
+    $("gradeResult").textContent =
+      "Enter valid marks.";
+
+    return;
+
+  }
+
+  const percentage =
+    obtained / total * 100;
+
+  let grade;
+
+  if(percentage >= 90) grade = "A+";
+  else if(percentage >= 80) grade = "A";
+  else if(percentage >= 70) grade = "B";
+  else if(percentage >= 60) grade = "C";
+  else if(percentage >= 50) grade = "D";
+  else grade = "F";
+
+  $("gradeResult").innerHTML =
+    `<strong>${percentage.toFixed(2)}% — Grade ${grade}</strong>`;
+
+};
+
+
+/* =========================================================
+   ATTENDANCE
+========================================================= */
+
+function attendanceTool(){
+
+  return `
+
+    <div class="tool-form">
+
+      <label>Classes attended</label>
+
+      <input
+        id="attended"
+        type="number">
+
+      <label>Total classes</label>
+
+      <input
+        id="classes"
+        type="number">
+
+      <button
+        class="btn primary"
+        onclick="calculateAttendance()">
+        Calculate
+      </button>
+
+      <div
+        class="result"
+        id="attendanceResult">
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+window.calculateAttendance = function(){
+
+  const attended =
+    Number($("attended").value);
+
+  const total =
+    Number($("classes").value);
+
+  if(total <= 0 || attended < 0){
+
+    $("attendanceResult").textContent =
+      "Enter valid values.";
+
+    return;
+
+  }
+
+  const percentage =
+    attended / total * 100;
+
+  $("attendanceResult").innerHTML =
+    `<strong>Attendance: ${percentage.toFixed(2)}%</strong>`;
+
+};
+
+
+/* =========================================================
+   PERCENTAGE
+========================================================= */
+
+function percentageTool(){
+
+  return `
+
+    <div class="tool-form">
+
+      <label>Value</label>
+
+      <input
+        id="percentValue"
+        type="number">
+
+      <label>Total</label>
+
+      <input
+        id="percentTotal"
+        type="number">
+
+      <button
+        class="btn primary"
+        onclick="calculatePercentage()">
+        Calculate
+      </button>
+
+      <div
+        class="result"
+        id="percentageResult">
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+window.calculatePercentage = function(){
+
+  const value =
+    Number($("percentValue").value);
+
+  const total =
+    Number($("percentTotal").value);
+
+  if(total === 0){
+
+    $("percentageResult").textContent =
+      "Total cannot be zero.";
+
+    return;
+
+  }
+
+  const result =
+    value / total * 100;
+
+  $("percentageResult").innerHTML =
+    `<strong>${result.toFixed(2)}%</strong>`;
+
+};
+
+
+/* =========================================================
+   AVERAGE
+========================================================= */
+
+function averageTool(){
+
+  return `
+
+    <div class="tool-form">
+
+      <label>Numbers</label>
+
+      <input
+        id="averageValues"
+        placeholder="10, 20, 30, 40">
+
+      <button
+        class="btn primary"
+        onclick="calculateAverage()">
+        Calculate Average
+      </button>
+
+      <div
+        class="result"
+        id="averageResult">
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+window.calculateAverage = function(){
+
+  const values =
+    $("averageValues").value
+      .split(",")
+      .map(Number)
+      .filter(Number.isFinite);
+
+  if(!values.length){
+
+    $("averageResult").textContent =
+      "Enter numbers separated by commas.";
+
+    return;
+
+  }
+
+  const avg =
+    values.reduce(
+      (a,b)=>a+b,
+      0
+    ) / values.length;
+
+  $("averageResult").innerHTML =
+    `<strong>Average: ${avg.toFixed(2)}</strong>`;
+
+};
+
+
+/* =========================================================
+   AGE
+========================================================= */
+
+function ageTool(){
+
+  return `
+
+    <div class="tool-form">
+
+      <label>Date of birth</label>
+
+      <input
+        id="dob"
+        type="date">
+
+      <button
+        class="btn primary"
+        onclick="calculateAge()">
+        Calculate Age
+      </button>
+
+      <div
+        class="result"
+        id="ageResult">
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+window.calculateAge = function(){
+
+  const value =
+    $("dob").value;
+
+  if(!value){
+
+    $("ageResult").textContent =
+      "Select your date of birth.";
+
+    return;
+
+  }
+
+  const dob =
+    new Date(value + "T00:00:00");
+
+  const today =
+    new Date();
+
+  if(dob > today){
+
+    $("ageResult").textContent =
+      "Date of birth cannot be in the future.";
+
+    return;
+
+  }
+
+  let years =
+    today.getFullYear() -
+    dob.getFullYear();
+
+  let months =
+    today.getMonth() -
+    dob.getMonth();
+
+  if(
+    months < 0 ||
+    (
+      months === 0 &&
+      today.getDate() < dob.getDate()
+    )
+  ){
+
+    years--;
+
+  }
+
+  $("ageResult").innerHTML =
+    `<strong>Age: ${years} years</strong>`;
+
+};
+
+
+/* =========================================================
+   UNIT CONVERTER
+========================================================= */
+
+function unitTool(){
+
+  return `
+
+    <div class="tool-form">
+
+      <label>Value</label>
+
+      <input
+        id="unitValue"
+        type="number">
+
+      <label>Conversion</label>
+
+      <select id="unitType">
+
+        <option value="km-mi">
+          Kilometers → Miles
+        </option>
+
+        <option value="mi-km">
+          Miles → Kilometers
+        </option>
+
+        <option value="kg-lb">
+          Kilograms → Pounds
+        </option>
+
+        <option value="lb-kg">
+          Pounds → Kilograms
+        </option>
+
+        <option value="c-f">
+          Celsius → Fahrenheit
+        </option>
+
+        <option value="f-c">
+          Fahrenheit → Celsius
+        </option>
+
+      </select>
+
+      <button
+        class="btn primary"
+        onclick="convertUnit()">
+        Convert
+      </button>
+
+      <div
+        class="result"
+        id="unitResult">
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+window.convertUnit = function(){
+
+  const value =
+    Number($("unitValue").value);
+
+  const type =
+    $("unitType").value;
+
+  let result;
+
+  switch(type){
+
+    case "km-mi":
+      result = value * .621371;
+      break;
+
+    case "mi-km":
+      result = value * 1.609344;
+      break;
+
+    case "kg-lb":
+      result = value * 2.2046226218;
+      break;
+
+    case "lb-kg":
+      result = value / 2.2046226218;
+      break;
+
+    case "c-f":
+      result = value * 9 / 5 + 32;
+      break;
+
+    case "f-c":
+      result = (value - 32) * 5 / 9;
+      break;
+
+  }
+
+  $("unitResult").innerHTML =
+    `<strong>${result.toFixed(4)}</strong>`;
+
+};
+
+
+/* =========================================================
+   QR
+========================================================= */
+
+function qrTool(){
+
+  return `
+
+    <div class="tool-form">
+
+      <label>Text or URL</label>
+
+      <input
+        id="qrText"
+        placeholder="https://example.com">
+
+      <button
+        class="btn primary"
+        onclick="generateQR()">
+        Generate QR
+      </button>
+
+      <div
+        class="result"
+        id="qrResult"
+        style="text-align:center">
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+window.generateQR = function(){
+
+  const text =
+    $("qrText").value.trim();
+
+  if(!text){
+
+    $("qrResult").textContent =
+      "Enter text or URL.";
+
+    return;
+
+  }
+
+  const url =
+    "https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=" +
+    encodeURIComponent(text);
+
+  $("qrResult").innerHTML = `
+
+    <img
+      src="${url}"
+      alt="Generated QR Code"
+      style="
+        width:260px;
+        max-width:100%;
+        border-radius:12px;
+      ">
+
+    <br><br>
+
+    <a
+      class="btn primary"
+      href="${url}"
+      target="_blank"
+      rel="noopener">
+      Open QR
+    </a>
+
+  `;
+
+};
+
+
+/* =========================================================
+   PASSWORD
+========================================================= */
+
+function passwordTool(){
+
+  return `
+
+    <div class="tool-form">
+
+      <label>Password length</label>
+
+      <input
+        id="passwordLength"
+        type="number"
+        min="8"
+        max="64"
+        value="16">
+
+      <button
+        class="btn primary"
+        onclick="generatePassword()">
+        Generate Password
+      </button>
+
+      <div
+        class="result"
+        id="passwordResult">
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+window.generatePassword = function(){
+
+  let length =
+    Number($("passwordLength").value);
+
+  length =
+    Math.max(8,Math.min(64,length));
+
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+
+  let result = "";
+
+  for(let i=0;i<length;i++){
+
+    result +=
+      chars[Math.floor(Math.random()*chars.length)];
+
+  }
+
+  $("passwordResult").innerHTML = `
+
+    <strong style="word-break:break-all">
+      ${escapeHTML(result)}
+    </strong>
+
+    <br><br>
+
+    <button
+      class="btn"
+      onclick="navigator.clipboard.writeText('${result.replaceAll("'","\\'")}')">
+      Copy
+    </button>
+
+  `;
+
+};
+
+
+/* =========================================================
+   WORD COUNTER
+========================================================= */
+
+function wordTool(){
+
+  return `
+
+    <div class="tool-form">
+
+      <textarea
+        id="wordText"
+        rows="9"
+        placeholder="Paste or write your text here..."></textarea>
+
+      <button
+        class="btn primary"
+        onclick="countWords()">
+        Count
+      </button>
+
+      <div
+        class="result"
+        id="wordResult">
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+window.countWords = function(){
+
+  const text =
+    $("wordText").value.trim();
+
+  const words =
+    text
+      ? text.split(/\s+/).length
+      : 0;
+
+  const chars =
+    text.length;
+
+  const sentences =
+    text
+      ? text.split(/[.!?]+/)
+          .filter(x=>x.trim()).length
+      : 0;
+
+  $("wordResult").innerHTML = `
+
+    <strong>
+      ${words} words
+    </strong>
+
+    <br>
+
+    ${chars} characters
+
+    <br>
+
+    ${sentences} sentences
+
+  `;
+
+};
+
+
+/* =========================================================
+   CASE CONVERTER
+========================================================= */
+
+function caseTool(){
+
+  return `
+
+    <div class="tool-form">
+
+      <textarea
+        id="caseText"
+        rows="8"
+        placeholder="Write your text..."></textarea>
+
+      <button
+        class="btn"
+        onclick="convertCase('upper')">
+        UPPERCASE
+      </button>
+
+      <button
+        class="btn"
+        onclick="convertCase('lower')">
+        lowercase
+      </button>
+
+      <button
+        class="btn primary"
+        onclick="convertCase('title')">
+        Title Case
+      </button>
+
+    </div>
+
+  `;
+
+}
+
+window.convertCase = function(type){
+
+  const input =
+    $("caseText");
+
+  const text =
+    input.value;
+
+  if(type === "upper"){
+
+    input.value =
+      text.toUpperCase();
+
+  }
+
+  if(type === "lower"){
+
+    input.value =
+      text.toLowerCase();
+
+  }
+
+  if(type === "title"){
+
+    input.value =
+      text.toLowerCase()
+        .replace(
+          /\b\w/g,
+          c => c.toUpperCase()
+        );
+
+  }
+
+};
+
+
+/* =========================================================
+   CITATION
+========================================================= */
+
+function citationTool(){
+
+  return `
+
+    <div class="tool-form">
+
+      <label>Author</label>
+
+      <input id="citeAuthor">
+
+      <label>Year</label>
+
+      <input id="citeYear" type="number">
+
+      <label>Title</label>
+
+      <input id="citeTitle">
+
+      <label>Website / Publisher</label>
+
+      <input id="citePublisher">
+
+      <button
+        class="btn primary"
+        onclick="makeCitation()">
+        Create Citation
+      </button>
+
+      <div
+        class="result"
+        id="citationResult">
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+window.makeCitation = function(){
+
+  const author =
+    $("citeAuthor").value.trim();
+
+  const year =
+    $("citeYear").value.trim();
+
+  const title =
+    $("citeTitle").value.trim();
+
+  const publisher =
+    $("citePublisher").value.trim();
+
+  $("citationResult").innerHTML =
+    `<strong>${escapeHTML(author)}</strong> (${escapeHTML(year)}). ${escapeHTML(title)}. ${escapeHTML(publisher)}.`;
+
+};
+
+
+/* =========================================================
+   POMODORO
+========================================================= */
+
+let pomoSeconds = 25 * 60;
+let pomoInterval = null;
+
+function pomodoroTool(){
+
+  setTimeout(updatePomo,50);
+
+  return `
+
+    <div style="text-align:center">
+
+      <div
+        id="pomoTimer"
+        style="
+          font-size:48px;
+          font-weight:900;
+          margin:20px 0;
+        ">
+        25:00
+      </div>
+
+      <button
+        class="btn primary"
+        onclick="togglePomo()">
+        Start / Pause
+      </button>
+
+      <button
+        class="btn"
+        onclick="resetPomo()">
+        Reset
+      </button>
+
+      <p style="
+        color:var(--muted);
+        margin-top:15px">
+        25 minutes focus • 5 minutes break
+      </p>
+
+    </div>
+
+  `;
+
+}
+
+function updatePomo(){
+
+  const el =
+    $("pomoTimer");
+
+  if(!el) return;
+
+  const m =
+    Math.floor(pomoSeconds/60)
+      .toString()
+      .padStart(2,"0");
+
+  const s =
+    (pomoSeconds%60)
+      .toString()
+      .padStart(2,"0");
+
+  el.textContent =
+    `${m}:${s}`;
+
+}
+
+window.togglePomo = function(){
+
+  if(pomoInterval){
+
+    clearInterval(pomoInterval);
+    pomoInterval = null;
+
+    return;
+
+  }
+
+  pomoInterval =
+    setInterval(()=>{
+
+      pomoSeconds--;
+
+      updatePomo();
+
+      if(pomoSeconds <= 0){
+
+        clearInterval(pomoInterval);
+        pomoInterval = null;
+
+        alert(
+          "Pomodoro complete!"
+        );
+
+        pomoSeconds =
+          25 * 60;
+
+        updatePomo();
+
+      }
+
+    },1000);
+
+};
+
+window.resetPomo = function(){
+
+  clearInterval(pomoInterval);
+
+  pomoInterval = null;
+
+  pomoSeconds =
+    25 * 60;
+
+  updatePomo();
+
+};
+
+
+/* =========================================================
+   EXAM COUNTDOWN
+========================================================= */
+
+function examTool(){
+
+  return `
+
+    <div class="tool-form">
+
+      <label>Exam date</label>
+
+      <input
+        id="examDate"
+        type="date">
+
+      <button
+        class="btn primary"
+        onclick="calculateExam()">
+        Calculate Countdown
+      </button>
+
+      <div
+        class="result"
+        id="examResult">
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+window.calculateExam = function(){
+
+  const value =
+    $("examDate").value;
+
+  if(!value){
+
+    $("examResult").textContent =
+      "Select your exam date.";
+
+    return;
+
+  }
+
+  const exam =
+    new Date(value + "T00:00:00");
+
+  const now =
+    new Date();
+
+  const diff =
+    Math.ceil(
+      (exam-now) /
+      (1000*60*60*24)
+    );
+
+  if(diff < 0){
+
+    $("examResult").innerHTML =
+      `<strong>This exam date has passed.</strong>`;
+
+    return;
+
+  }
+
+  $("examResult").innerHTML =
+    `<strong>${diff} days remaining.</strong>`;
+
+};
+
+
+/* =========================================================
+   BUDGET
+========================================================= */
+
+function budgetTool(){
+
+  return `
+
+    <div class="tool-form">
+
+      <label>Monthly income</label>
+
+      <input
+        id="income"
+        type="number"
+        placeholder="50000">
+
+      <label>Food</label>
+
+      <input
+        id="food"
+        type="number"
+        placeholder="10000">
+
+      <label>Transport</label>
+
+      <input
+        id="transport"
+        type="number"
+        placeholder="5000">
+
+      <label>Study / Education</label>
+
+      <input
+        id="education"
+        type="number"
+        placeholder="5000">
+
+      <label>Other expenses</label>
+
+      <input
+        id="other"
+        type="number"
+        placeholder="3000">
+
+      <button
+        class="btn primary"
+        onclick="calculateBudget()">
+        Calculate Budget
+      </button>
+
+      <div
+        class="result"
+        id="budgetResult">
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+window.calculateBudget = function(){
+
+  const income =
+    Number($("income").value) || 0;
+
+  const expenses =
+    (Number($("food").value) || 0) +
+    (Number($("transport").value) || 0) +
+    (Number($("education").value) || 0) +
+    (Number($("other").value) || 0);
+
+  const saving =
+    income - expenses;
+
+  $("budgetResult").innerHTML = `
+
+    <strong>
+      Total expenses: ${expenses.toLocaleString()}
+    </strong>
+
+    <br>
+
+    Remaining:
+    ${saving.toLocaleString()}
+
+  `;
+
+};
+
+
+/* =========================================================
+   INTERVIEW
+========================================================= */
+
+function interviewTool(){
+
+  const questions = [
+
+    "Tell me about yourself.",
+    "Why should we hire you?",
+    "What are your strengths?",
+    "What is one weakness you are working on?",
+    "Where do you see yourself in five years?",
+    "Why do you want this position?",
+    "Tell me about a challenge you solved.",
+    "Why should we choose you over other candidates?"
+
+  ];
+
+  const question =
+    questions[
+      Math.floor(
+        Math.random()*questions.length
+      )
+    ];
+
+  return `
+
+    <div class="tool-form">
+
+      <div class="result">
+
+        <strong>
+          Interview Question
+        </strong>
+
+        <br><br>
+
+        ${question}
+
+      </div>
+
+      <textarea
+        id="interviewAnswer"
+        rows="7"
+        placeholder="Write your answer here..."></textarea>
+
+      <button
+        class="btn primary"
+        onclick="showInterviewTips()">
+        Check My Answer
+      </button>
+
+      <div
+        class="result"
+        id="interviewResult"
+        style="display:none">
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+window.showInterviewTips = function(){
+
+  const answer =
+    $("interviewAnswer").value.trim();
+
+  if(!answer){
+
+    alert("Write your answer first.");
+    return;
+
+  }
+
+  $("interviewResult").style.display =
+    "block";
+
+  $("interviewResult").innerHTML = `
+
+    <strong>Quick feedback</strong>
+
+    <br><br>
+
+    Good answer structure:
+
+    <br>
+    1. Give a direct answer.
+    <br>
+    2. Add a specific example.
+    <br>
+    3. Explain the result.
+    <br>
+    4. Keep it concise and professional.
+
+  `;
+
+};
+
+
+/* =========================================================
+   TIME ZONE
+========================================================= */
+
+function timezoneTool(){
+
+  return `
+
+    <div class="tool-form">
+
+      <label>Choose destination</label>
+
+      <select id="timezoneSelect">
+
+        <option value="America/New_York">
+          New York
+        </option>
+
+        <option value="Europe/London">
+          London
+        </option>
+
+        <option value="Europe/Paris">
+          Paris
+        </option>
+
+        <option value="Asia/Dubai">
+          Dubai
+        </option>
+
+        <option value="Asia/Karachi">
+          Pakistan
+        </option>
+
+        <option value="Asia/Kolkata">
+          India
+        </option>
+
+        <option value="Asia/Tokyo">
+          Tokyo
+        </option>
+
+        <option value="Australia/Sydney">
+          Sydney
+        </option>
+
+      </select>
+
+      <button
+        class="btn primary"
+        onclick="showTimezone()">
+        Show Time
+      </button>
+
+      <div
+        class="result"
+        id="timezoneResult">
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+window.showTimezone = function(){
+
+  const zone =
+    $("timezoneSelect").value;
+
+  const now =
+    new Date();
+
+  const formatted =
+    new Intl.DateTimeFormat(
+      "en-US",
+      {
+        dateStyle:"full",
+        timeStyle:"long",
+        timeZone:zone
+      }
+    ).format(now);
+
+  $("timezoneResult").innerHTML =
+    `<strong>${formatted}</strong>`;
+
+};
+
+
+/* =========================================================
+   CURRENCY
+========================================================= */
+
+function currencyTool(){
+
+  return `
+
+    <div class="tool-form">
+
+      <label>Amount</label>
+
+      <input
+        id="currencyAmount"
+        type="number"
+        value="1">
+
+      <label>From</label>
+
+      <select id="currencyFrom">
+
+        <option>USD</option>
+        <option>EUR</option>
+        <option>GBP</option>
+        <option>PKR</option>
+        <option>AED</option>
+        <option>CAD</option>
+        <option>AUD</option>
+        <option>INR</option>
+        <option>SAR</option>
+
+      </select>
+
+      <label>To</label>
+
+      <select id="currencyTo">
+
+        <option>PKR</option>
+        <option>USD</option>
+        <option>EUR</option>
+        <option>GBP</option>
+        <option>AED</option>
+        <option>CAD</option>
+        <option>AUD</option>
+        <option>INR</option>
+        <option>SAR</option>
+
+      </select>
+
+      <button
+        class="btn primary"
+        onclick="convertCurrency()">
+        Convert
+      </button>
+
+      <div
+        class="result"
+        id="currencyResult">
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+window.convertCurrency = async function(){
+
+  const amount =
+    Number($("currencyAmount").value);
+
+  const from =
+    $("currencyFrom").value;
+
+  const to =
+    $("currencyTo").value;
+
+  if(!amount){
+
+    $("currencyResult").textContent =
+      "Enter an amount.";
+
+    return;
+
+  }
+
+  $("currencyResult").textContent =
+    "Loading exchange rate...";
+
+  try{
+
+    const response =
+      await fetch(
+        `https://open.er-api.com/v6/latest/${from}`
+      );
+
+    const json =
+      await response.json();
+
+    const rate =
+      json.rates?.[to];
+
+    if(!rate){
+
+      throw new Error(
+        "Rate unavailable"
+      );
+
+    }
+
+    const result =
+      amount * rate;
+
+    $("currencyResult").innerHTML = `
+
+      <strong>
+        ${amount} ${from}
+        =
+        ${result.toFixed(2)} ${to}
+      </strong>
+
+      <br><br>
+
+      Rate:
+      1 ${from} =
+      ${rate.toFixed(4)} ${to}
+
+      <br><br>
+
+      <small>
+        Exchange rates can change.
+      </small>
+
+    `;
+
+  }catch{
+
+    $("currencyResult").textContent =
+      "Could not load the exchange rate. Check your internet connection.";
+
+  }
+
+};
+
+
+/* =========================================================
+   DATE DIFFERENCE
+========================================================= */
+
+function dateTool(){
+
+  return `
+
+    <div class="tool-form">
+
+      <label>Start date</label>
+
+      <input
+        id="dateStart"
+        type="date">
+
+      <label>End date</label>
+
+      <input
+        id="dateEnd"
+        type="date">
+
+      <button
+        class="btn primary"
+        onclick="calculateDateDifference()">
+        Calculate
+      </button>
+
+      <div
+        class="result"
+        id="dateResult">
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+window.calculateDateDifference = function(){
+
+  const start =
+    $("dateStart").value;
+
+  const end =
+    $("dateEnd").value;
+
+  if(!start || !end){
+
+    $("dateResult").textContent =
+      "Select both dates.";
+
+    return;
+
+  }
+
+  const a =
+    new Date(start + "T00:00:00");
+
+  const b =
+    new Date(end + "T00:00:00");
+
+  const days =
+    Math.abs(
+      Math.round(
+        (b-a) /
+        (1000*60*60*24)
+      )
+    );
+
+  $("dateResult").innerHTML =
+    `<strong>${days} days</strong>`;
+
+};
+
+
+/* =========================================================
+   KEYBOARD / ESC
+========================================================= */
+
+document.addEventListener(
+  "keydown",
+  e => {
+
+    if(e.key === "Escape"){
+      closeTool();
+    }
+
+  }
+);
+
+
+/* =========================================================
+   INITIAL UPDATE
+========================================================= */
+
+updateStats();
+renderTasks();
+renderNotes();
+renderHabits();
