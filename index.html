@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#5b5ce2">
+<meta name="description" content="StudentHub — free online student tools: GPA, CGPA, grades, attendance, percentage, age, unit conversion, word counter, study timer, exam countdown, QR generator and official CV Builder.">
+<meta name="robots" content="index,follow">
+<meta property="og:title" content="StudentHub — Free Student Tools">
+<meta property="og:description" content="A practical toolkit for students worldwide.">
+<meta property="og:type" content="website">
+<title>StudentHub — Free Student Tools</title>
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"StudentHub","applicationCategory":"EducationalApplication","operatingSystem":"Web","description":"Free browser-based tools for students worldwide.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+</head>
+<body>
+<header class="header"><div class="container navwrap">
+<a class="brand" href="#home"><b>S</b><span>Student<span>Hub</span></span></a>
+<nav id="nav">
+<a href="#home">Home</a><a href="#tools">Tools</a><a href="#features">Features</a><a href="#faq">FAQ</a>
+<button class="navcv" data-cv>CV Builder</button><button class="theme" id="theme">☾</button>
+</nav><button class="menubtn" id="menu">☰</button>
+</div></header>
+
+<main>
+<section class="hero" id="home"><div class="container hero-grid">
+<div><div class="pill">● FREE STUDENT TOOLKIT</div>
+<h1>Study smarter.<br><span>Do more.</span></h1>
+<p class="lead">A growing collection of fast, simple and free tools for students around the world — from academic calculations to productivity and career preparation.</p>
+<div class="actions"><a class="btn primary" href="#tools">Explore Tools →</a><button class="btn ghost" data-cv>Create Your CV</button></div>
+<div class="checks"><span>✓ Free core tools</span><span>✓ Mobile friendly</span><span>✓ No account required</span></div></div>
+<div class="dashboard-card"><div class="dash-head"><b>Student Dashboard</b><span>● Ready</span></div>
+<div class="dash-search">⌕ &nbsp; Search a tool...</div>
+<div class="dash-grid"><div><b>3.72</b><small>GPA</small></div><div><b>86%</b><small>Attendance</small></div><div><b>18</b><small>Tools</small></div><div><b>CV</b><small>Career</small></div></div>
+<div class="studybar"><span>Study session</span><strong>72%</strong><i><em></em></i></div></div>
+</div></section>
+
+<section class="stats"><div class="container statsgrid"><div><b>18+</b><small>Useful tools</small></div><div><b>100%</b><small>Browser based</small></div><div><b>24/7</b><small>Worldwide access</small></div><div><b>0</b><small>Signup for basics</small></div></div></section>
+
+<section class="section" id="tools"><div class="container">
+<div class="sectionhead"><div><label>STUDENT TOOLS</label><h2>Your everyday academic toolkit.</h2><p>Search or choose a category.</p></div><div class="search">⌕<input id="search" placeholder="Search tools..."></div></div>
+<div class="cats"><button class="active" data-cat="all">All</button><button data-cat="academic">Academic</button><button data-cat="calculator">Calculators</button><button data-cat="writing">Writing</button><button data-cat="productivity">Productivity</button><button data-cat="career">Career</button><button data-cat="utility">Utilities</button></div>
+<div class="toolgrid" id="grid">
+
+<article class="tool" data-cat="academic calculator" data-name="GPA Calculator" data-tool="gpa"><i class="ico purple">GPA</i><h3>GPA Calculator</h3><p>Calculate weighted semester GPA from credits and grade points.</p><button>Open →</button></article>
+<article class="tool" data-cat="academic calculator" data-name="CGPA Calculator" data-tool="cgpa"><i class="ico blue">CG</i><h3>CGPA Calculator</h3><p>Combine semester results into a weighted cumulative GPA.</p><button>Open →</button></article>
+<article class="tool" data-cat="academic calculator" data-name="Grade Calculator" data-tool="grade"><i class="ico green">A+</i><h3>Grade Calculator</h3><p>Find a grade from marks and a customizable grading scale.</p><button>Open →</button></article>
+<article class="tool" data-cat="academic calculator" data-name="Attendance Calculator" data-tool="attendance"><i class="ico teal">%</i><h3>Attendance Calculator</h3><p>Check attendance percentage and how many classes you can miss.</p><button>Open →</button></article>
+<article class="tool" data-cat="calculator" data-name="Percentage Calculator" data-tool="percentage"><i class="ico orange">%</i><h3>Percentage Calculator</h3><p>Calculate marks percentage, increase and decrease.</p><button>Open →</button></article>
+<article class="tool" data-cat="calculator" data-name="Average Calculator" data-tool="average"><i class="ico cyan">AVG</i><h3>Average Calculator</h3><p>Calculate mean, total, highest and lowest from numbers.</p><button>Open →</button></article>
+<article class="tool" data-cat="calculator utility" data-name="Age Calculator" data-tool="age"><i class="ico pink">AGE</i><h3>Age Calculator</h3><p>Calculate exact age in years, months and days.</p><button>Open →</button></article>
+<article class="tool" data-cat="utility calculator" data-name="Unit Converter" data-tool="units"><i class="ico violet">↔</i><h3>Unit Converter</h3><p>Convert length, weight, temperature and data units.</p><button>Open →</button></article>
+<article class="tool" data-cat="writing academic" data-name="Word Counter" data-tool="words"><i class="ico red">Aa</i><h3>Word Counter</h3><p>Words, characters, sentences, paragraphs and reading time.</p><button>Open →</button></article>
+<article class="tool" data-cat="writing utility" data-name="Case Converter" data-tool="case"><i class="ico gold">Aa</i><h3>Case Converter</h3><p>UPPERCASE, lowercase, Title Case and Sentence case.</p><button>Open →</button></article>
+<article class="tool" data-cat="productivity academic" data-name="Study Timer Pomodoro" data-tool="timer"><i class="ico cyan">⏱</i><h3>Study Timer</h3><p>Focus sessions with a simple Pomodoro timer.</p><button>Open →</button></article>
+<article class="tool" data-cat="productivity academic" data-name="Exam Countdown" data-tool="countdown"><i class="ico purple">D−</i><h3>Exam Countdown</h3><p>Set an exam date and see the remaining time.</p><button>Open →</button></article>
+<article class="tool" data-cat="utility" data-name="QR Code Generator" data-tool="qr"><i class="ico blue">QR</i><h3>QR Code Generator</h3><p>Turn a URL or text into a QR code in seconds.</p><button>Open →</button></article>
+<article class="tool" data-cat="utility" data-name="Password Generator" data-tool="password"><i class="ico dark">•••</i><h3>Password Generator</h3><p>Generate a strong random password locally in your browser.</p><button>Open →</button></article>
+<article class="tool" data-cat="productivity" data-name="Study Planner" data-tool="planner"><i class="ico green">✓</i><h3>Study Planner</h3><p>Create simple study tasks saved locally on your device.</p><button>Open →</button></article>
+<article class="tool featured" data-cat="career" data-name="Official CV Builder" data-tool="cv"><span class="official">OFFICIAL</span><i class="ico gold">CV</i><h3>CV Builder</h3><p>Open the official professional CV Builder from StudentHub.</p><button>Open CV Builder →</button></article>
+</div><div id="none" class="none hidden">No matching tools found.</div>
+</div></section>
+
+<section class="section alt" id="features"><div class="container"><div class="center sectionhead"><label>WHY STUDENTHUB</label><h2>Designed to grow with students.</h2><p>Useful today, expandable tomorrow.</p></div>
+<div class="features"><div><b>⚡</b><h3>Fast</h3><p>Most calculations happen instantly in the browser.</p></div><div><b>🌍</b><h3>Global</h3><p>Designed for students regardless of country or institution.</p></div><div><b>🔒</b><h3>Privacy-first</h3><p>Basic tools do not require an account or cloud upload.</p></div><div><b>📱</b><h3>Mobile-first</h3><p>Comfortable on phones, tablets and desktops.</p></div><div><b>🧠</b><h3>Practical</h3><p>Focused on tasks students actually perform.</p></div><div><b>🚀</b><h3>Ready to grow</h3><p>Premium accounts, cloud sync and advanced tools can be added later.</p></div></div></div></section>
+
+<section class="section"><div class="container cta"><div><label>CAREER READY</label><h2>Build a CV that looks professional.</h2><p>Use your official CV Builder without leaving StudentHub.</p></div><button class="btn light" data-cv>Open CV Builder →</button></div></section>
+
+<section class="section" id="faq"><div class="container faqwrap"><div class="center"><label>FAQ</label><h2>Frequently asked questions</h2></div>
+<details><summary>Is StudentHub free?</summary><p>Yes. The core student tools are free. Premium features can be introduced later without removing the useful free tools.</p></details>
+<details><summary>Do I need an account?</summary><p>No. The current core tools work without an account. A future account system can provide cloud sync and saved history.</p></details>
+<details><summary>Can students worldwide use it?</summary><p>Yes. The calculations and utilities are designed as general-purpose student tools rather than for one specific institution.</p></details>
+<details><summary>What is the CV Builder?</summary><p>StudentHub connects to the official CV Builder so students can create a professional CV for internships, jobs and applications.</p></details>
+</div></section>
+</main>
+
+<footer><div class="container foot"><div><a class="brand" href="#home"><b>S</b><span>Student<span>Hub</span></span></a><p>Useful digital tools for students worldwide.</p></div><div><h4>Tools</h4><a href="#tools">Student Tools</a><a href="#features">Features</a></div><div><h4>Career</h4><button data-cv>Official CV Builder</button></div></div><div class="container copy">© <span id="year"></span> StudentHub. All rights reserved.</div></footer>
+
+<div class="modal" id="modal"><div class="back" data-close></div><div class="dialog"><div class="dhead"><div><label id="kicker">STUDENT TOOL</label><h2 id="title"></h2></div><button class="close" data-close>×</button></div><div id="body"></div></div></div>
+
+<div class="cvmodal" id="cvmodal"><div class="back"></div><div class="cvsheet" id="cvsheet"><div class="cvhead" id="cvdrag"><div><label>OFFICIAL CV BUILDER</label><h2>Create your professional CV</h2></div><div class="cvbuttons"><a href="https://cv-builder-xi-one.vercel.app/" target="_blank" rel="noopener">Open New Tab ↗</a><button class="close" id="cvclose">×</button></div></div><div class="frame"><div class="loading" id="loading"><span></span><p>Opening CV Builder...</p></div><iframe id="cvframe" title="Official CV Builder" src="about:blank"></iframe><div class="fallback" id="fallback"><strong>CV Builder cannot be embedded here.</strong><p>The official website may block iframe embedding for security. You can still open it directly.</p><a class="btn primary" href="https://cv-builder-xi-one.vercel.app/" target="_blank" rel="noopener">Open Official CV Builder →</a></div></div></div></div>
+
+<script src="app.js"></script>
+</body></html>
