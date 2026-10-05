@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://studenthub-two-ruddy.vercel.app/sitemap.xml
