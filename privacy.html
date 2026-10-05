@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="StudentHub privacy policy.">
+  <title>Privacy Policy - StudentHub</title>
+  <link rel="icon" href="favicon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="container nav-wrap">
+    <a href="index.html" class="brand">
+      <span class="brand-icon">S</span>
+      <span>StudentHub</span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="index.html">Dashboard</a>
+      <a href="index.html#tools">Tools</a>
+      <a href="about.html">About</a>
+    </nav>
+
+    <button id="themeToggle" class="icon-btn">🌙</button>
+  </div>
+</header>
+
+<main class="container page-content">
+
+  <section class="page-hero">
+    <span class="eyebrow">PRIVACY</span>
+    <h1>Privacy Policy</h1>
+    <p>
+      This page explains how StudentHub handles information when you use
+      the website.
+    </p>
+  </section>
+
+  <article class="legal-card">
+
+    <p class="legal-updated">
+      Last updated: October 5, 2026
+    </p>
+
+    <h2>1. Information We Collect</h2>
+    <p>
+      StudentHub is designed to minimize unnecessary data collection.
+      Many features operate directly inside your browser.
+    </p>
+
+    <h2>2. Browser Storage</h2>
+    <p>
+      Some features may use browser local storage to remember information
+      such as tasks, notes, habits, preferences and theme settings.
+      This information normally remains on your device and is not
+      automatically sent to StudentHub servers.
+    </p>
+
+    <h2>3. Third-Party Services</h2>
+    <p>
+      Some tools may communicate with external services to provide
+      functionality such as QR-code generation or currency information.
+      Those services may process requests according to their own privacy
+      policies.
+    </p>
+
+    <h2>4. External Links</h2>
+    <p>
+      StudentHub may contain links to external websites or services.
+      StudentHub is not responsible for the privacy practices or content
+      of external websites.
+    </p>
+
+    <h2>5. Cookies</h2>
+    <p>
+      StudentHub may use browser technologies such as local storage for
+      basic functionality and preferences.
+    </p>
+
+    <h2>6. Children's Privacy</h2>
+    <p>
+      StudentHub is intended as a general educational and productivity
+      resource. We do not intentionally request sensitive personal
+      information from users through the basic website.
+    </p>
+
+    <h2>7. Security</h2>
+    <p>
+      We aim to provide a safe and reliable service, but no internet
+      service can guarantee absolute security.
+    </p>
+
+    <h2>8. Changes to This Policy</h2>
+    <p>
+      This privacy policy may be updated when StudentHub introduces new
+      features or services. Updated versions will be published on this page.
+    </p>
+
+    <h2>9. Contact</h2>
+    <p>
+      If you have questions about this privacy policy, please use the
+      contact information provided with the StudentHub service.
+    </p>
+
+  </article>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div>
+      <strong>StudentHub</strong>
+      <p>Useful digital tools for students worldwide.</p>
+    </div>
+
+    <div class="footer-links">
+      <a href="about.html">About</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const savedTheme = localStorage.getItem("studenthub_theme");
+
+if (savedTheme === "dark") {
+  document.body.classList.add("dark");
+}
+
+const button = document.getElementById("themeToggle");
+
+button.textContent =
+  document.body.classList.contains("dark") ? "☀️" : "🌙";
+
+button.onclick = () => {
+  document.body.classList.toggle("dark");
+
+  const dark = document.body.classList.contains("dark");
+
+  localStorage.setItem(
+    "studenthub_theme",
+    dark ? "dark" : "light"
+  );
+
+  button.textContent = dark ? "☀️" : "🌙";
+};
+</script>
+
+</body>
+</html>
