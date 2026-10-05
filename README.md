@@ -1,15 +1,69 @@
-# StudentHub Final
+# StudentHub
 
-Pre-publish international student toolkit.
+StudentHub is a free, mobile-first online toolkit designed for students worldwide.
 
-## Included
-GPA, CGPA, Grade, Attendance, Percentage, Average, Age, Unit/Data converter, Word Counter, Case Converter, Pomodoro Timer, Exam Countdown, QR Generator, Password Generator, Study Planner and Official CV Builder integration.
+## Features
 
-## Official CV Builder
-https://cv-builder-xi-one.vercel.app/
+- Student dashboard
+- Task manager
+- Focus timer
+- GPA calculator
+- CGPA calculator
+- Grade calculator
+- Attendance calculator
+- Percentage calculator
+- Average calculator
+- Age calculator
+- Unit converter
+- QR generator
+- Password generator
+- Word counter
+- Case converter
+- Citation helper
+- Pomodoro timer
+- Exam countdown
+- Student budget
+- Interview practice
+- Time zone converter
+- Currency converter
+- Date difference calculator
+- Study notes
+- Study habits
+- Career tools
+- Dark/light mode
+- Responsive mobile interface
 
-## Publish later
-Upload these files to GitHub Pages, Vercel or Netlify. Before publishing, replace YOUR-DOMAIN.example in robots.txt and sitemap.xml with the actual domain.
+## Tech
 
-## Note
-The CV Builder frame includes a fallback because the destination site may block iframe embedding with security headers.
+StudentHub uses:
+
+- HTML
+- CSS
+- JavaScript
+- Browser LocalStorage
+- External APIs where required
+
+## Deployment
+
+The project can be deployed using:
+
+- Vercel
+- GitHub Pages
+- Netlify
+- Any static hosting provider
+
+## Project Structure
+
+```text
+StudentHub/
+├── index.html
+├── style.css
+├── app.js
+├── about.html
+├── privacy.html
+├── terms.html
+├── manifest.json
+├── favicon.svg
+├── robots.txt
+├── sitemap.xml
+└── README.md
